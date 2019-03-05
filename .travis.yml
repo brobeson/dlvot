@@ -16,4 +16,5 @@ install:
 
 script:
   - black --check .
-  - ./dl-vot --version
+  - pylint dlvot
+  - ./dlvot --version

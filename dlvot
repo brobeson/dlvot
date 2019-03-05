@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+"""This is a script to download VOT Challenge data sets."""
+
 import argparse
 
 __version__ = "0.0"
@@ -29,5 +31,5 @@ def _parse_arguments():
 
 
 if __name__ == "__main__":
-    arguments = _parse_arguments()
-    print(arguments)
+    ARGUMENTS = _parse_arguments()
+    print(ARGUMENTS)
