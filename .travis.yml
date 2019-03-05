@@ -1,0 +1,17 @@
+# vim: nospell
+
+language: python
+git:
+  quiet: true
+  submodules: false
+branches:
+  only:
+    - /.*/
+python:
+  - '3.4'
+  - '3.5'
+  - '3.6'
+  - '3.7'
+
+script:
+  - ./dl-vot --version
