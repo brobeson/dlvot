@@ -4,30 +4,40 @@
 
 import argparse
 import requests
-import wget
+
+# import wget
 
 __version__ = "0.0"
 
 
-# def _download_sequences():
+# def _download_sequences(sequences):
 #    root_url = "http://data.votchallenge.net/sequences"
-#    #for sequence in sequences:
-#    #    print(f"Downloading {sequence['name']}")
-#    #    response = requests.get(f"{root_url}/{sequence['channels']['color']['uid']}.zip")
-#    #response = requests.get(f"{root_url}/{sequences[0]['channels']['color']['uid']}.zip")
-#    #print(response)
-#    filename = wget.download(f"{root_url}/{sequences[0]['channels']['color']['uid']}.zip",
-#            f"{sequences[0]['name']}.zip")
+#    for sequence in sequences:
+#        print(f"Downloading {sequence['name']}")
+#        response = requests.get(
+#            f"{root_url}/{sequence['channels']['color']['uid']}.zip"
+#        )
+#    response = requests.get(
+#        f"{root_url}/{sequences[0]['channels']['color']['uid']}.zip"
+#    )
+#    print(response)
+#    filename = wget.download(
+#        f"{root_url}/{sequences[0]['channels']['color']['uid']}.zip",
+#        f"{sequences[0]['name']}.zip",
+#    )
 #    print(filename)
-#    #http://data.votchallenge.net/sequences/84b35f0d0e6a1e39eea057d2141542688a51b1bc17bce9c6bf582b9ea744d2b3d705bb2238661481f20edc68e303002977968ac12201a7c0a8c66c2e9ce963bd.zip
+# http://data.votchallenge.net/sequences/
+# 84b35f0d0e6a1e39eea057d2141542688a51b1bc17bce9c6bf582b9ea744d2b3d705bb2238
+# 661481f20edc68e303002977968ac12201a7c0a8c66c2e9ce963bd.zip
 
 
-def _download_dataset_description(year):
+def _download_dataset_description():
     print(f"Downloading meta-data for data set {year}.")
     response = requests.get(METADATA_URLS[year])
     if response.status_code != 200:
         print(
-            f"Failed to download the data set description for {year}. Here is the response text:"
+            f"Failed to download the data set description for {year}. Here is "
+            "the response text:"
         )
         print(response.reason)
     try:
@@ -36,10 +46,11 @@ def _download_dataset_description(year):
         print("Failed to parse the downloaded JSON content for {year}.")
 
 
-def _download_dataset(year):
-    description = _download_dataset_description(year)
-    sequences = description["sequences"]
-    # _download_sequences()
+def _download_dataset():
+    _download_dataset_description()
+    # description = _download_dataset_description()
+    # sequences = description["sequences"]
+    # _download_sequences(sequences)
 
 
 def _parse_arguments():
@@ -76,8 +87,8 @@ if __name__ == "__main__":
     }
     ARGUMENTS = _parse_arguments()
     if ARGUMENTS["dataset"] == "all":
-        for year in METADATA_URLS.keys():
-            _download_dataset(year)
+        for year in METADATA_URLS:
+            _download_dataset()
     else:
         for year in ARGUMENTS["dataset"]:
-            _download_dataset(year)
+            _download_dataset()
