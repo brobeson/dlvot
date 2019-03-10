@@ -3,8 +3,43 @@
 """This is a script to download VOT Challenge data sets."""
 
 import argparse
+import requests
+import wget
 
 __version__ = "0.0"
+
+
+# def _download_sequences():
+#    root_url = "http://data.votchallenge.net/sequences"
+#    #for sequence in sequences:
+#    #    print(f"Downloading {sequence['name']}")
+#    #    response = requests.get(f"{root_url}/{sequence['channels']['color']['uid']}.zip")
+#    #response = requests.get(f"{root_url}/{sequences[0]['channels']['color']['uid']}.zip")
+#    #print(response)
+#    filename = wget.download(f"{root_url}/{sequences[0]['channels']['color']['uid']}.zip",
+#            f"{sequences[0]['name']}.zip")
+#    print(filename)
+#    #http://data.votchallenge.net/sequences/84b35f0d0e6a1e39eea057d2141542688a51b1bc17bce9c6bf582b9ea744d2b3d705bb2238661481f20edc68e303002977968ac12201a7c0a8c66c2e9ce963bd.zip
+
+
+def _download_dataset_description(year):
+    print(f"Downloading meta-data for data set {year}.")
+    response = requests.get(METADATA_URLS[year])
+    if response.status_code != 200:
+        print(
+            f"Failed to download the data set description for {year}. Here is the response text:"
+        )
+        print(response.reason)
+    try:
+        return response.json()
+    except ValueError:
+        print("Failed to parse the downloaded JSON content for {year}.")
+
+
+def _download_dataset(year):
+    description = _download_dataset_description(year)
+    sequences = description["sequences"]
+    # _download_sequences()
 
 
 def _parse_arguments():
@@ -31,5 +66,18 @@ def _parse_arguments():
 
 
 if __name__ == "__main__":
+    METADATA_URLS = {
+        "2013": "http://data.votchallenge.net/vot2013/dataset/description.json",
+        "2014": "http://data.votchallenge.net/vot2014/dataset/description.json",
+        "2015": "http://data.votchallenge.net/vot2015/dataset/description.json",
+        "2016": "http://data.votchallenge.net/vot2016/main/description.json",
+        "2017": "http://data.votchallenge.net/vot2017/main/description.json",
+        "2018": "http://data.votchallenge.net/vot2018/main/description.json",
+    }
     ARGUMENTS = _parse_arguments()
-    print(ARGUMENTS)
+    if ARGUMENTS["dataset"] == "all":
+        for year in METADATA_URLS.keys():
+            _download_dataset(year)
+    else:
+        for year in ARGUMENTS["dataset"]:
+            _download_dataset(year)
