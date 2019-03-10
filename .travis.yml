@@ -12,7 +12,7 @@ python:
   - '3.7-dev'
 
 install:
-  - pip install --quiet --requirement ci-requirements.txt
+  - pip install --quiet --requirement ci-requirements.txt --requirement requirements.txt
 
 script:
   - black --check .

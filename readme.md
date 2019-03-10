@@ -16,6 +16,12 @@ documentation below is what you can expect as I make progress.
 Python 3 is required. The software is automatically tested on Python 3.6 and
 3.7. Older versions of Python 3 _should_ work, but aren't guaranteed.
 
+Some 3rd party Python libraries are also needed. You can install these just by
+running
+```
+$ pip install --requirement requirements.txt
+```
+
 ## Installation
 
 Right now, this software must be manually downloaded from this repository. The
