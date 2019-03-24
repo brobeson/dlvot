@@ -4,29 +4,54 @@
 
 import argparse
 import os.path
+import zipfile
+
 import requests
 import wget
 
 __version__ = "0.0"
 
 
+def _download_annotations(annotations, directory):
+    zip_file = os.path.join(directory, "annotations.zip")
+    url = METADATA_URLS[year].replace("description.json", annotations["url"])
+    wget.download(url, zip_file)
+    print()
+    with zipfile.ZipFile(zip_file) as file_:
+        file_.extractall(path=directory)
+    os.remove(zip_file)
+
+
+def _make_directory_structure(sequence_name):
+    sequence_directory = os.path.join(ROOT_DIRECTORY, year, sequence_name)
+    images_directory = os.path.join(
+        ROOT_DIRECTORY, "sequences", "color", sequence_name
+    )
+    os.makedirs(sequence_directory, exist_ok=True)
+    os.makedirs(images_directory, exist_ok=True)
+    return {"sequence": sequence_directory, "images": images_directory}
+
+
 def _download_sequences(sequences, sequence_directory):
     root_url = "http://data.votchallenge.net/sequences"
     # for sequence in sequences:
     sequence = sequences[0]
-    filename = f"{sequence['name']}.zip"
-    filepath = os.path.join(DOWNLOAD_DIRECTORY, filename)
-    if os.path.exists(filepath):
-        print(f"Skipping {filename}, it already exists.")
-    else:
-        print(f"Downloading {filename}")
-        wget.download(
-            f"{root_url}/{sequence['channels']['color']['uid']}.zip",
-            f"{filepath}",
-        )
-        # wget.download() doesn't print a newline after the progress bar
-        print()
-        os.symlink(filepath, os.path.join(sequence_directory, filename))
+    directories = _make_directory_structure(sequence["name"])
+    _download_annotations(sequence["annotations"], directories["sequence"])
+    # filename = f"{sequence['name']}.zip"
+    # filepath = os.path.join(DOWNLOAD_DIRECTORY, filename)
+    # print(filepath)
+    # if os.path.exists(filepath):
+    #    print(f"Skipping {filename}, it already exists.")
+    # else:
+    #    print(f"Downloading {filename}")
+    #    wget.download(
+    #        f"{root_url}/{sequence['channels']['color']['uid']}.zip",
+    #        f"{filepath}",
+    #    )
+    #    # wget.download() doesn't print a newline after the progress bar
+    #    print()
+    #    os.symlink(filepath, os.path.join(sequence_directory, filename))
 
 
 def _download_dataset_description():
