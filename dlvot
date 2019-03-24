@@ -3,32 +3,30 @@
 """This is a script to download VOT Challenge data sets."""
 
 import argparse
+import os.path
 import requests
-
-# import wget
+import wget
 
 __version__ = "0.0"
 
 
-# def _download_sequences(sequences):
-#    root_url = "http://data.votchallenge.net/sequences"
-#    for sequence in sequences:
-#        print(f"Downloading {sequence['name']}")
-#        response = requests.get(
-#            f"{root_url}/{sequence['channels']['color']['uid']}.zip"
-#        )
-#    response = requests.get(
-#        f"{root_url}/{sequences[0]['channels']['color']['uid']}.zip"
-#    )
-#    print(response)
-#    filename = wget.download(
-#        f"{root_url}/{sequences[0]['channels']['color']['uid']}.zip",
-#        f"{sequences[0]['name']}.zip",
-#    )
-#    print(filename)
-# http://data.votchallenge.net/sequences/
-# 84b35f0d0e6a1e39eea057d2141542688a51b1bc17bce9c6bf582b9ea744d2b3d705bb2238
-# 661481f20edc68e303002977968ac12201a7c0a8c66c2e9ce963bd.zip
+def _download_sequences(sequences, sequence_directory):
+    root_url = "http://data.votchallenge.net/sequences"
+    # for sequence in sequences:
+    sequence = sequences[0]
+    filename = f"{sequence['name']}.zip"
+    filepath = os.path.join(download_directory, filename)
+    if os.path.exists(filepath):
+        print(f"Skipping {filename}, it already exists.")
+    else:
+        print(f"Downloading {filename}")
+        wget.download(
+            f"{root_url}/{sequence['channels']['color']['uid']}.zip",
+            f"{filepath}",
+        )
+        # wget.download() doesn't print a newline after the progress bar
+        print()
+        os.symlink(filepath, os.path.join(sequence_directory, filename))
 
 
 def _download_dataset_description():
@@ -47,10 +45,11 @@ def _download_dataset_description():
 
 
 def _download_dataset():
-    _download_dataset_description()
-    # description = _download_dataset_description()
-    # sequences = description["sequences"]
-    # _download_sequences(sequences)
+    description = _download_dataset_description()
+    sequences = description["sequences"]
+    sequence_directory = os.path.join(ROOT_DIRECTORY, year)
+    os.makedirs(download_directory, exist_ok=True)
+    _download_sequences(sequences, sequence_directory)
 
 
 def _parse_arguments():
@@ -77,6 +76,8 @@ def _parse_arguments():
 
 
 if __name__ == "__main__":
+    ROOT_DIRECTORY = os.path.expanduser("~/Videos/vot")
+    download_directory = os.path.join(ROOT_DIRECTORY, "sequences")
     METADATA_URLS = {
         "2013": "http://data.votchallenge.net/vot2013/dataset/description.json",
         "2014": "http://data.votchallenge.net/vot2014/dataset/description.json",
