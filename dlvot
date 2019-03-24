@@ -15,7 +15,7 @@ def _download_sequences(sequences, sequence_directory):
     # for sequence in sequences:
     sequence = sequences[0]
     filename = f"{sequence['name']}.zip"
-    filepath = os.path.join(download_directory, filename)
+    filepath = os.path.join(DOWNLOAD_DIRECTORY, filename)
     if os.path.exists(filepath):
         print(f"Skipping {filename}, it already exists.")
     else:
@@ -48,7 +48,7 @@ def _download_dataset():
     description = _download_dataset_description()
     sequences = description["sequences"]
     sequence_directory = os.path.join(ROOT_DIRECTORY, year)
-    os.makedirs(download_directory, exist_ok=True)
+    os.makedirs(DOWNLOAD_DIRECTORY, exist_ok=True)
     _download_sequences(sequences, sequence_directory)
 
 
@@ -77,7 +77,7 @@ def _parse_arguments():
 
 if __name__ == "__main__":
     ROOT_DIRECTORY = os.path.expanduser("~/Videos/vot")
-    download_directory = os.path.join(ROOT_DIRECTORY, "sequences")
+    DOWNLOAD_DIRECTORY = os.path.join(ROOT_DIRECTORY, "sequences")
     METADATA_URLS = {
         "2013": "http://data.votchallenge.net/vot2013/dataset/description.json",
         "2014": "http://data.votchallenge.net/vot2014/dataset/description.json",
