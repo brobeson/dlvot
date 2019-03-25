@@ -12,6 +12,16 @@ import wget
 __version__ = "0.0"
 
 
+def _download_images(images_url, directory):
+    zip_file = os.path.join(directory, "images.zip")
+    url = METADATA_URLS[year].replace("description.json", images_url)
+    wget.download(url, zip_file)
+    print()
+    with zipfile.ZipFile(zip_file) as file_:
+        file_.extractall(path=directory)
+    os.remove(zip_file)
+
+
 def _download_annotations(annotations, directory):
     zip_file = os.path.join(directory, "annotations.zip")
     url = METADATA_URLS[year].replace("description.json", annotations["url"])
@@ -32,26 +42,22 @@ def _make_directory_structure(sequence_name):
     return {"sequence": sequence_directory, "images": images_directory}
 
 
-def _download_sequences(sequences, sequence_directory):
-    root_url = "http://data.votchallenge.net/sequences"
+def _download_sequences(sequences):
     # for sequence in sequences:
     sequence = sequences[0]
-    directories = _make_directory_structure(sequence["name"])
-    _download_annotations(sequence["annotations"], directories["sequence"])
-    # filename = f"{sequence['name']}.zip"
-    # filepath = os.path.join(DOWNLOAD_DIRECTORY, filename)
-    # print(filepath)
-    # if os.path.exists(filepath):
-    #    print(f"Skipping {filename}, it already exists.")
-    # else:
-    #    print(f"Downloading {filename}")
-    #    wget.download(
-    #        f"{root_url}/{sequence['channels']['color']['uid']}.zip",
-    #        f"{filepath}",
-    #    )
-    #    # wget.download() doesn't print a newline after the progress bar
-    #    print()
-    #    os.symlink(filepath, os.path.join(sequence_directory, filename))
+    if "color" in sequence["channels"]:
+        directories = _make_directory_structure(sequence["name"])
+        print("Downloading", sequence["name"])
+        _download_annotations(sequence["annotations"], directories["sequence"])
+        _download_images(
+            sequence["channels"]["color"]["url"], directories["images"]
+        )
+        os.symlink(
+            directories["images"],
+            os.path.join(directories["sequence"], "color"),
+        )
+    else:
+        print("Skipping ${sequence['name'] - It has no color channel.")
 
 
 def _download_dataset_description():
@@ -72,9 +78,7 @@ def _download_dataset_description():
 def _download_dataset():
     description = _download_dataset_description()
     sequences = description["sequences"]
-    sequence_directory = os.path.join(ROOT_DIRECTORY, year)
-    os.makedirs(DOWNLOAD_DIRECTORY, exist_ok=True)
-    _download_sequences(sequences, sequence_directory)
+    _download_sequences(sequences)
 
 
 def _parse_arguments():
@@ -102,7 +106,6 @@ def _parse_arguments():
 
 if __name__ == "__main__":
     ROOT_DIRECTORY = os.path.expanduser("~/Videos/vot")
-    DOWNLOAD_DIRECTORY = os.path.join(ROOT_DIRECTORY, "sequences")
     METADATA_URLS = {
         "2013": "http://data.votchallenge.net/vot2013/dataset/description.json",
         "2014": "http://data.votchallenge.net/vot2014/dataset/description.json",
