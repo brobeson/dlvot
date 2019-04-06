@@ -17,7 +17,18 @@ will download the 2017 and 2018 VOT data sets:
 $ dlvot 2017 2018
 ```
 
+On Windows:
+
+```
+C:\Users\you> py dlvot 2017 2018
+```
+
 Run `dlvot --help` for complete information.
+
+### Note for Windows Users
+
+On Windows, you must run dlvot with elevated privileges. Otherwise, you will get
+an `OSError` exception when the application tries to create a symlink.
 
 ## How dlvot Works
 
