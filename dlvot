@@ -50,21 +50,22 @@ def _make_directory_structure(sequence_name):
 
 
 def _download_sequences(sequences):
-    # for sequence in sequences:
-    sequence = sequences[0]
-    if "color" in sequence["channels"]:
-        directories = _make_directory_structure(sequence["name"])
-        print("Downloading", sequence["name"])
-        _download_annotations(sequence["annotations"], directories["sequence"])
-        _download_images(
-            sequence["channels"]["color"]["url"], directories["images"]
-        )
-        _make_symlink(
-            directories["images"],
-            os.path.join(directories["sequence"], "color"),
-        )
-    else:
-        print("Skipping ${sequence['name'] - It has no color channel.")
+    for sequence in sequences:
+        if "color" in sequence["channels"]:
+            directories = _make_directory_structure(sequence["name"])
+            print("Downloading", sequence["name"])
+            _download_annotations(
+                sequence["annotations"], directories["sequence"]
+            )
+            _download_images(
+                sequence["channels"]["color"]["url"], directories["images"]
+            )
+            _make_symlink(
+                directories["images"],
+                os.path.join(directories["sequence"], "color"),
+            )
+        else:
+            print("Skipping ${sequence['name'] - It has no color channel.")
 
 
 def _download_dataset_description():
