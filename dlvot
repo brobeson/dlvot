@@ -9,7 +9,7 @@ import zipfile
 import requests
 import wget
 
-__version__ = "0.0"
+__version__ = "1.0"
 
 
 def _make_symlink(target, link):
