@@ -12,6 +12,13 @@ import wget
 __version__ = "0.0"
 
 
+def _make_symlink(target, link):
+    if os.path.exists(link):
+        print(link, "already exists, so not creating a symlink.")
+    else:
+        os.symlink(target, link)
+
+
 def _download_images(images_url, directory):
     zip_file = os.path.join(directory, "images.zip")
     url = METADATA_URLS[year].replace("description.json", images_url)
@@ -52,7 +59,7 @@ def _download_sequences(sequences):
         _download_images(
             sequence["channels"]["color"]["url"], directories["images"]
         )
-        os.symlink(
+        _make_symlink(
             directories["images"],
             os.path.join(directories["sequence"], "color"),
         )
