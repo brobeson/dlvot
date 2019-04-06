@@ -94,12 +94,11 @@ def _parse_arguments():
     parser.add_argument(
         "dataset",
         choices=["all", "2013", "2014", "2015", "2016", "2017", "2018"],
-        default="all",
         help="The dataset(s) to download. Acceptable values are 'all', or the "
         "years 2013 through 2018. 'All' takes precedence and will download all "
         "datasets.",
         metavar="dataset",
-        nargs="*",
+        nargs="+",
     )
     return vars(parser.parse_args())
 
