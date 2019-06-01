@@ -2,7 +2,8 @@
 
 ## Installation
 
-1. Download [dlvot](https://github.com/brobeson/dlvot/blob/master/dlvot).
+1. Download the latest version of
+   [dlvot](https://raw.githubusercontent.com/brobeson/dlvot/1.0.0/dlvot)
 1. Install the *requests* and *wget* packages for Python:
    ```
    $ pip install requests wget
