@@ -4,6 +4,7 @@ jobs=0
 
 [MESSAGES CONTROL]
 enable=c-extension-no-member
+disable=bad-continuation
 
 
 [REPORTS]

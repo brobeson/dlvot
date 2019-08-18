@@ -3,7 +3,8 @@
 """This is a script to download OTB data sets."""
 
 import argparse
-import os.path
+import os
+import shutil
 import zipfile
 
 import wget
@@ -533,11 +534,48 @@ def _parse_arguments():
     parser.parse_args()
 
 
+def _clean_duplicate_sequences(root_directory):
+    for sequence in ["Jogging", "Skating2"]:
+        shutil.copytree(
+            os.path.join(root_directory, sequence),
+            os.path.join(root_directory, f"{sequence}-2"),
+        )
+        os.rename(
+            os.path.join(root_directory, sequence),
+            os.path.join(root_directory, f"{sequence}-1"),
+        )
+        os.rename(
+            os.path.join(
+                root_directory, f"{sequence}-1", "groundtruth_rect.1.txt"
+            ),
+            os.path.join(
+                root_directory, f"{sequence}-1", "groundtruth_rect.txt"
+            ),
+        )
+        os.rename(
+            os.path.join(
+                root_directory, f"{sequence}-2", "groundtruth_rect.2.txt"
+            ),
+            os.path.join(
+                root_directory, f"{sequence}-2", "groundtruth_rect.txt"
+            ),
+        )
+        os.remove(
+            os.path.join(
+                root_directory, f"{sequence}-1", "groundtruth_rect.2.txt"
+            )
+        )
+        os.remove(
+            os.path.join(
+                root_directory, f"{sequence}-2", "groundtruth_rect.1.txt"
+            )
+        )
+
+
 def _main():
     root_directory = os.path.expanduser("~/Videos/otb")
     _parse_arguments()
-    # for sequence in SEQUENCES:
-    for sequence in ["Basketball"]:
+    for sequence in SEQUENCES:
         print("Downloading", sequence)
         zip_file = os.path.join(root_directory, f"{sequence}.zip")
         wget.download(
@@ -548,9 +586,13 @@ def _main():
         with zipfile.ZipFile(zip_file) as file_:
             file_.extractall(path=root_directory)
         os.remove(zip_file)
-        with open(os.path.join(root_directory, sequence, "attributes.txt"), "w") as f:
+        with open(
+            os.path.join(root_directory, sequence, "attributes.txt"), "w"
+        ) as file_:
             for attribute in SEQUENCES[sequence]:
-                f.write(f"{attribute}\n")
+                file_.write(f"{attribute}\n")
+    _clean_duplicate_sequences(root_directory)
+    shutil.rmtree(os.path.join(root_directory, "__MACOSX"))
 
 
 if __name__ == "__main__":
