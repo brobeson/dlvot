@@ -101,7 +101,7 @@ def _parse_arguments():
     )
     parser.add_argument(
         "dataset",
-        choices=["all", "2013", "2014", "2015", "2016", "2017", "2018"],
+        choices=["all", "2013", "2014", "2015", "2016", "2017", "2018", "2019"],
         help="The dataset(s) to download. Acceptable values are 'all', or the "
         "years 2013 through 2018. 'All' takes precedence and will download all "
         "datasets.",
@@ -120,6 +120,7 @@ if __name__ == "__main__":
         "2016": "http://data.votchallenge.net/vot2016/main/description.json",
         "2017": "http://data.votchallenge.net/vot2017/main/description.json",
         "2018": "http://data.votchallenge.net/vot2018/main/description.json",
+        "2019": "http://data.votchallenge.net/vot2019/main/description.json",
     }
     ARGUMENTS = _parse_arguments()
     if ARGUMENTS["dataset"] == "all":
