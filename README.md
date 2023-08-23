@@ -1,5 +1,8 @@
 # dl-vot
 
+> [!WARNING]
+> I no longer maintain this project.
+
 [![Build
 Status](https://travis-ci.com/brobeson/dlvot.svg?branch=master)](https://travis-ci.com/brobeson/dlvot)
 
